@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#07101f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Word Quest 3D Native v3.0</title>
+<title>Word Quest 3D Native v3.1</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="style.css">
@@ -15,13 +15,15 @@
 <div id="app">
   <canvas id="gl"></canvas>
   <div id="labels"></div>
+  <div class="scene-grid"></div><div class="scene-vignette"></div><div id="particles" class="particles"></div>
   <div class="ambient a"></div><div class="ambient b"></div>
 
   <header class="top glass">
-    <div class="brand"><div class="mark">WQ</div><div><b>Word Quest 3D</b><small>v3.0 · WebGL Native</small></div></div>
+    <div class="brand"><div class="mark">WQ</div><div><b>Word Quest 3D</b><small>v3.1 · WebGL Native</small></div></div>
     <div class="wallet"><span>⭐ <b id="stars">0</b></span><span>🪙 <b id="coins">100</b></span><button id="settings" aria-label="Ajustes">⚙️</button></div>
   </header>
 
+  <div id="worldChip" class="world-chip glass"><span class="world-dot"></span><b>ESCENARIO ACTIVO</b></div>
   <section class="hud glass">
     <small id="world">MUNDO 1 · NEXO</small>
     <div class="title-row"><div><h1 id="title">Nivel 1</h1><p id="subtitle">Encuentra todas las palabras</p></div><div id="levelBadge" class="badge">1</div></div>
@@ -48,9 +50,9 @@
   <section id="start" class="screen show">
     <div class="panel glass-heavy">
       <div class="orb"><div>WQ</div><i></i><i></i></div>
-      <span class="version">WEBGL NATIVO · V3.0</span>
+      <span class="version">WEBGL NATIVO · V3.1 VISUAL</span>
       <h2>Sopa de letras<br><em>en 3D real.</em></h2>
-      <p>Geometría, cámara, profundidad, iluminación y selección tridimensional ejecutadas directamente en WebGL.</p>
+      <p>Explora mundos de palabras con cubos iluminados, cámara cinematográfica y efectos reactivos en tiempo real.</p>
       <button id="play" class="cta">COMENZAR <span>▶</span></button>
       <div class="features"><div><b>12</b><small>Niveles</small></div><div><b>5</b><small>Mundos</small></div><div><b>3D</b><small>Real</small></div></div>
     </div>
