@@ -6,25 +6,62 @@
 <meta name="theme-color" content="#07101f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Word Quest 3D v2.1</title>
+<title>Word Quest 3D Native v3.0</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="app">
-<canvas id="game" aria-label="Tablero 3D de sopa de letras"></canvas>
-<header class="topbar glass"><div><b>WORD QUEST 3D</b><small>v2.1 · motor local</small></div><div class="stats"><span>⭐ <b id="stars">0</b></span><span>🪙 <b id="coins">120</b></span><button id="settings">⚙️</button></div></header>
-<section class="hud glass"><div class="eyebrow" id="world">MUNDO 1</div><h1 id="level">Nivel 1</h1><p id="subtitle">Encuentra todas las palabras</p><div class="progress"><i id="bar"></i></div><div class="hudrow"><span>⏱ <b id="timer">00:00</b></span><span>🔥 <b id="streak">0</b></span><span>🎯 <b id="score">0</b></span></div></section>
-<aside class="words glass"><div class="wordshead"><div><small>OBJETIVOS</small><h2>Palabras</h2></div><button id="hint">💡 <b id="hints">3</b></button></div><div id="wordList"></div><p>Desliza sobre los cubos en línea recta.</p></aside>
-<nav class="controls glass"><button id="home">⌂<small>Inicio</small></button><button id="left">↶<small>Vista</small></button><button id="center">◎<small>Centrar</small></button><button id="right">↷<small>Vista</small></button><button id="pause">Ⅱ<small>Pausa</small></button></nav>
-<div id="toast" class="toast"></div><div id="combo" class="combo"></div>
-<section id="start" class="overlay visible"><div class="modal hero"><div class="logo">WQ</div><span>WORD QUEST 3D · V2.1</span><h2>Explora. Encuentra.<br><em>Conquista palabras.</em></h2><p>Juego 3D local, fluido y compatible con iPhone.</p><button id="play" class="cta">COMENZAR AVENTURA ▶</button><div class="feature"><b>12<small>Niveles</small></b><b>5<small>Mundos</small></b><b>∞<small>Partidas</small></b></div></div></section>
-<section id="pauseModal" class="overlay"><div class="modal"><h2>Partida en pausa</h2><p>El cronómetro está detenido.</p><button id="resume" class="cta">CONTINUAR</button><button id="restart" class="secondary">Reiniciar nivel</button></div></section>
-<section id="win" class="overlay"><div class="modal"><div id="winStars" class="winstars">★★★</div><small>NIVEL COMPLETADO</small><h2 id="winTitle">¡Excelente!</h2><p id="winText"></p><div class="rewards"><b>🎯 <span id="finalScore">0</span><small>Puntos</small></b><b>⏱ <span id="finalTime">00:00</span><small>Tiempo</small></b><b>🪙 <span id="finalCoins">+30</span><small>Premio</small></b></div><button id="next" class="cta">SIGUIENTE NIVEL →</button><button id="replay" class="secondary">Volver a jugar</button></div></section>
-<section id="settingsModal" class="overlay"><div class="modal settings"><button id="closeSettings" class="close">✕</button><h2>Ajustes</h2><label><span><b>Sonido</b><small>Efectos del juego</small></span><input id="sound" type="checkbox" checked></label><label><span><b>Vibración</b><small>Respuesta háptica</small></span><input id="vibration" type="checkbox" checked></label><label><span><b>Calidad</b><small>Rendimiento visual</small></span><select id="quality"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Baja</option></select></label><button id="reset" class="danger">Restablecer progreso</button></div></section>
-<div id="loading" class="loading"><div class="cube"></div><b>Construyendo universo 3D...</b><small>Motor local, sin dependencias externas</small></div>
+  <canvas id="gl"></canvas>
+  <div id="labels"></div>
+  <div class="ambient a"></div><div class="ambient b"></div>
+
+  <header class="top glass">
+    <div class="brand"><div class="mark">WQ</div><div><b>Word Quest 3D</b><small>v3.0 · WebGL Native</small></div></div>
+    <div class="wallet"><span>⭐ <b id="stars">0</b></span><span>🪙 <b id="coins">100</b></span><button id="settings" aria-label="Ajustes">⚙️</button></div>
+  </header>
+
+  <section class="hud glass">
+    <small id="world">MUNDO 1 · NEXO</small>
+    <div class="title-row"><div><h1 id="title">Nivel 1</h1><p id="subtitle">Encuentra todas las palabras</p></div><div id="levelBadge" class="badge">1</div></div>
+    <div class="progress"><i id="bar"></i></div><div class="hud-bottom"><span id="progressText">0 / 6</span><span>⏱ <b id="time">00:00</b></span><span>🎯 <b id="score">0</b></span></div>
+  </section>
+
+  <aside class="words glass">
+    <div class="words-head"><div><small>OBJETIVOS</small><h2>Palabras</h2></div><button id="hint">💡 <b id="hints">3</b></button></div>
+    <div id="wordList" class="word-list"></div>
+    <p>Desliza el dedo en línea recta sobre los cubos.</p>
+  </aside>
+
+  <nav class="controls glass">
+    <button id="home">⌂<small>Inicio</small></button>
+    <button id="left">↶<small>Girar</small></button>
+    <button id="center" class="main">◎<small>Centrar</small></button>
+    <button id="right">↷<small>Girar</small></button>
+    <button id="pause">Ⅱ<small>Pausa</small></button>
+  </nav>
+
+  <div id="toast" class="toast"></div>
+  <div id="combo" class="combo">¡PALABRA!</div>
+
+  <section id="start" class="screen show">
+    <div class="panel glass-heavy">
+      <div class="orb"><div>WQ</div><i></i><i></i></div>
+      <span class="version">WEBGL NATIVO · V3.0</span>
+      <h2>Sopa de letras<br><em>en 3D real.</em></h2>
+      <p>Geometría, cámara, profundidad, iluminación y selección tridimensional ejecutadas directamente en WebGL.</p>
+      <button id="play" class="cta">COMENZAR <span>▶</span></button>
+      <div class="features"><div><b>12</b><small>Niveles</small></div><div><b>5</b><small>Mundos</small></div><div><b>3D</b><small>Real</small></div></div>
+    </div>
+  </section>
+
+  <section id="pauseScreen" class="screen"><div class="modal glass-heavy"><div class="modal-icon">Ⅱ</div><h2>Partida en pausa</h2><p>El cronómetro está detenido.</p><button id="resume" class="cta">CONTINUAR</button><button id="restart" class="secondary">Reiniciar nivel</button></div></section>
+  <section id="win" class="screen"><div class="modal glass-heavy"><div id="winStars" class="win-stars">★ ★ ★</div><small>NIVEL COMPLETADO</small><h2 id="winTitle">¡Excelente!</h2><p id="winText"></p><div class="rewards"><div>🎯<b id="finalScore">0</b><small>Puntos</small></div><div>⏱<b id="finalTime">00:00</b><small>Tiempo</small></div><div>🪙<b id="reward">+30</b><small>Premio</small></div></div><button id="next" class="cta">SIGUIENTE NIVEL →</button><button id="replay" class="secondary">Volver a jugar</button></div></section>
+  <section id="settingsScreen" class="screen"><div class="modal glass-heavy settings"><button id="closeSettings" class="close">✕</button><h2>Ajustes</h2><label><span><b>Sonido</b><small>Efectos del juego</small></span><input id="sound" type="checkbox" checked></label><label><span><b>Vibración</b><small>Respuesta háptica</small></span><input id="vibration" type="checkbox" checked></label><label><span><b>Calidad</b><small>Resolución del render</small></span><select id="quality"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Baja</option></select></label><button id="reset" class="danger">Restablecer progreso</button></div></section>
+
+  <section id="loading" class="loading"><div class="cube-loader"><i></i><i></i><i></i></div><b>Iniciando WebGL 3D...</b><small id="loadingText">Preparando geometría e iluminación</small></section>
+  <section id="error" class="screen"><div class="modal glass-heavy"><div class="modal-icon">!</div><h2>No se pudo iniciar WebGL</h2><p id="errorText">Este navegador no habilitó la aceleración 3D.</p><button id="retry" class="cta">REINTENTAR</button></div></section>
 </div>
 <script src="app.js"></script>
 </body>
