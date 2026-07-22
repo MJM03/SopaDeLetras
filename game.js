@@ -82,16 +82,75 @@ function startLevel(level,daily=false){
   renderBoard();renderWords();updateGameUI();showScreen('gameScreen');startTimer();
 }
 function renderBoard(){
-  const board=el('wordBoard'),size=state.board.length;board.innerHTML='';board.style.gridTemplateColumns=`repeat(${size},1fr)`;
-  state.board.forEach((row,r)=>row.forEach((letter,c)=>{const cell=document.createElement('button');cell.type='button';cell.className='letter-cell';cell.textContent=letter;cell.dataset.r=r;cell.dataset.c=c;cell.addEventListener('pointerdown',pointerStart);cell.addEventListener('pointerenter',pointerEnter);cell.addEventListener('pointerup',pointerEnd);board.appendChild(cell);}));
-  board.addEventListener('pointerleave',()=>{if(state.dragging)pointerEnd()});
+  const board=el('wordBoard'),size=state.board.length;
+  board.innerHTML='';
+  board.style.gridTemplateColumns=`repeat(${size},1fr)`;
+  state.board.forEach((row,r)=>row.forEach((letter,c)=>{
+    const cell=document.createElement('button');
+    cell.type='button';
+    cell.className='letter-cell';
+    cell.textContent=letter;
+    cell.dataset.r=r;
+    cell.dataset.c=c;
+    board.appendChild(cell);
+  }));
+
+  // Los eventos se gestionan en el tablero. pointermove + elementFromPoint
+  // funciona correctamente tanto con mouse como con arrastre táctil en iOS/Android.
+  board.onpointerdown=pointerStart;
+  board.onpointermove=pointerMove;
+  board.onpointerup=pointerEnd;
+  board.onpointercancel=cancelSelection;
 }
 function renderWords(){const list=el('wordList');list.innerHTML='';state.words.forEach(w=>{const s=document.createElement('span');s.className='word-chip'+(state.found.has(w)?' found':'');s.textContent=w;s.dataset.word=w;list.appendChild(s)});el('foundCounter').textContent=`${state.found.size}/${state.words.length}`;}
-function pointerStart(e){if(state.paused)return;e.preventDefault();state.dragging=true;state.selection=[];clearSelection();addCellToSelection(e.currentTarget);}
-function pointerEnter(e){if(!state.dragging||state.paused)return;const target=e.currentTarget;const start=state.selection[0];if(!start)return;const r=+target.dataset.r,c=+target.dataset.c;const dr=r-start.r,dc=c-start.c;const valid=dr===0||dc===0||Math.abs(dr)===Math.abs(dc);if(!valid)return;const len=Math.max(Math.abs(dr),Math.abs(dc));const sr=Math.sign(dr),sc=Math.sign(dc);state.selection=[];clearSelection();for(let i=0;i<=len;i++){const node=document.querySelector(`.letter-cell[data-r="${start.r+sr*i}"][data-c="${start.c+sc*i}"]`);if(node)addCellToSelection(node)}}
+function getCellFromPoint(x,y){
+  const node=document.elementFromPoint(x,y);
+  return node&&node.closest?node.closest('.letter-cell'):null;
+}
+function pointerStart(e){
+  if(state.paused)return;
+  const target=e.target.closest('.letter-cell');
+  if(!target)return;
+  e.preventDefault();
+  state.dragging=true;
+  state.pointerId=e.pointerId;
+  state.selection=[];
+  clearSelection();
+  addCellToSelection(target);
+  try{el('wordBoard').setPointerCapture(e.pointerId)}catch{}
+}
+function pointerMove(e){
+  if(!state.dragging||state.paused||e.pointerId!==state.pointerId)return;
+  e.preventDefault();
+  const target=getCellFromPoint(e.clientX,e.clientY);
+  if(!target||!el('wordBoard').contains(target))return;
+  updateSelectionTo(target);
+}
+function updateSelectionTo(target){
+  const start=state.selection[0];
+  if(!start)return;
+  const r=+target.dataset.r,c=+target.dataset.c;
+  const dr=r-start.r,dc=c-start.c;
+  const valid=dr===0||dc===0||Math.abs(dr)===Math.abs(dc);
+  if(!valid)return;
+  const len=Math.max(Math.abs(dr),Math.abs(dc));
+  const sr=Math.sign(dr),sc=Math.sign(dc);
+  state.selection=[];
+  clearSelection();
+  for(let i=0;i<=len;i++){
+    const node=el('wordBoard').querySelector(`.letter-cell[data-r="${start.r+sr*i}"][data-c="${start.c+sc*i}"]`);
+    if(node)addCellToSelection(node);
+  }
+}
+function cancelSelection(){
+  state.dragging=false;
+  state.pointerId=null;
+  clearSelection();
+  state.selection=[];
+}
 function addCellToSelection(node){const r=+node.dataset.r,c=+node.dataset.c;if(state.selection.some(x=>x.r===r&&x.c===c))return;state.selection.push({r,c,node});node.classList.add('selecting')}
 function clearSelection(){document.querySelectorAll('.letter-cell.selecting').forEach(n=>n.classList.remove('selecting'))}
-function pointerEnd(){if(!state.dragging)return;state.dragging=false;const word=state.selection.map(x=>state.board[x.r][x.c]).join('');const rev=[...word].reverse().join('');const match=state.words.find(w=>(w===word||w===rev)&&!state.found.has(w));if(match){state.found.add(match);state.selection.forEach(x=>x.node.classList.add('found'));state.score+=100+state.seconds;state.save.totalWords++;beep(720,.12);vibrate([20,30,20]);burst();renderWords();updateGameUI();if(state.found.size===state.words.length)setTimeout(completeLevel,500);}else if(word.length>1){beep(180,.08);vibrate(35);}clearSelection();state.selection=[];}
+function pointerEnd(e){if(!state.dragging)return;if(e&&state.pointerId!==undefined&&e.pointerId!==state.pointerId)return;state.dragging=false;state.pointerId=null;const word=state.selection.map(x=>state.board[x.r][x.c]).join('');const rev=[...word].reverse().join('');const match=state.words.find(w=>(w===word||w===rev)&&!state.found.has(w));if(match){state.found.add(match);state.selection.forEach(x=>x.node.classList.add('found'));state.score+=100+state.seconds;state.save.totalWords++;beep(720,.12);vibrate([20,30,20]);burst();renderWords();updateGameUI();if(state.found.size===state.words.length)setTimeout(completeLevel,500);}else if(word.length>1){beep(180,.08);vibrate(35);}clearSelection();state.selection=[];}
 function updateGameUI(){el('scoreLabel').textContent=state.score.toLocaleString();el('timeLabel').textContent=formatTime(state.seconds);el('starsLive').textContent='★'.repeat(currentStars())+'☆'.repeat(3-currentStars());}
 function formatTime(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
 function currentStars(){const config=levelConfig(state.currentLevel);const ratio=state.seconds/config.time;return ratio>.55?3:ratio>.25?2:1}
