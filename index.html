@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="Word Quest: juego de sopa de letras con niveles, pistas, monedas y progreso." />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Word Quest v1.0</title>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+
+    <header class="topbar">
+      <button id="backBtn" class="icon-btn hidden" aria-label="Volver">←</button>
+      <div class="brand-mini">
+        <span class="brand-orb">W</span>
+        <div><strong>Word Quest</strong><small>v1.0</small></div>
+      </div>
+      <div class="resource-pill"><span>🪙</span><strong id="coinsLabel">120</strong></div>
+    </header>
+
+    <main>
+      <section id="homeScreen" class="screen active">
+        <div class="hero-panel">
+          <div class="logo-mark" aria-hidden="true">
+            <span>W</span><i></i><b></b>
+          </div>
+          <p class="eyebrow">DESAFÍA TU MENTE</p>
+          <h1>Word Quest</h1>
+          <p class="hero-copy">Encuentra palabras, supera mundos y construye tu racha perfecta.</p>
+          <button id="playBtn" class="primary-btn pulse">Jugar ahora</button>
+          <button id="dailyBtn" class="secondary-btn">Reto diario <span class="badge">+25 🪙</span></button>
+        </div>
+
+        <div class="stats-strip">
+          <article><span>🔥</span><strong id="streakHome">0</strong><small>Racha</small></article>
+          <article><span>⭐</span><strong id="starsHome">0</strong><small>Estrellas</small></article>
+          <article><span>🏆</span><strong id="winsHome">0</strong><small>Victorias</small></article>
+        </div>
+
+        <div class="home-actions">
+          <button id="statsBtn" class="action-card"><span>📊</span><div><strong>Estadísticas</strong><small>Revisa tu progreso</small></div></button>
+          <button id="settingsBtn" class="action-card"><span>⚙️</span><div><strong>Ajustes</strong><small>Sonido y accesibilidad</small></div></button>
+        </div>
+      </section>
+
+      <section id="mapScreen" class="screen">
+        <div class="section-heading">
+          <div><p class="eyebrow">MUNDO 1</p><h2>Bosque de Letras</h2></div>
+          <span id="worldProgress" class="progress-badge">0/12</span>
+        </div>
+        <div class="world-card">
+          <div class="world-progress"><div id="worldProgressBar"></div></div>
+          <p>Completa los niveles y desbloquea el portal final.</p>
+        </div>
+        <div id="levelMap" class="level-map" aria-label="Mapa de niveles"></div>
+      </section>
+
+      <section id="gameScreen" class="screen">
+        <div class="game-hud">
+          <div class="hud-box"><small>NIVEL</small><strong id="levelLabel">1</strong></div>
+          <div class="hud-box"><small>TIEMPO</small><strong id="timeLabel">02:00</strong></div>
+          <div class="hud-box"><small>PUNTOS</small><strong id="scoreLabel">0</strong></div>
+        </div>
+
+        <div class="goal-row">
+          <div><p id="categoryLabel">Animales</p><small id="difficultyLabel">8 × 8 · Fácil</small></div>
+          <div class="stars-live" id="starsLive">★★★</div>
+        </div>
+
+        <div class="board-wrap">
+          <div id="wordBoard" class="word-board" aria-label="Sopa de letras"></div>
+          <canvas id="fxCanvas"></canvas>
+        </div>
+
+        <div class="game-tools">
+          <button id="hintBtn" class="tool-btn"><span>💡</span><strong>Pista</strong><small>15 🪙</small></button>
+          <button id="shuffleBtn" class="tool-btn"><span>🔄</span><strong>Reiniciar</strong><small>tablero</small></button>
+          <button id="pauseBtn" class="tool-btn"><span>⏸️</span><strong>Pausa</strong><small>tiempo</small></button>
+        </div>
+
+        <div class="words-panel">
+          <div class="panel-title"><h3>Palabras</h3><span id="foundCounter">0/0</span></div>
+          <div id="wordList" class="word-list"></div>
+        </div>
+      </section>
+
+      <section id="statsScreen" class="screen">
+        <div class="section-heading"><div><p class="eyebrow">TU PROGRESO</p><h2>Estadísticas</h2></div></div>
+        <div class="metric-grid">
+          <article><span>🏆</span><strong id="statWins">0</strong><small>Niveles ganados</small></article>
+          <article><span>🔤</span><strong id="statWords">0</strong><small>Palabras halladas</small></article>
+          <article><span>⭐</span><strong id="statStars">0</strong><small>Estrellas</small></article>
+          <article><span>⏱️</span><strong id="statBest">--</strong><small>Mejor tiempo</small></article>
+        </div>
+        <div class="achievement-panel">
+          <h3>Logros</h3>
+          <div id="achievementList" class="achievement-list"></div>
+        </div>
+      </section>
+
+      <section id="settingsScreen" class="screen">
+        <div class="section-heading"><div><p class="eyebrow">PERSONALIZA</p><h2>Ajustes</h2></div></div>
+        <div class="settings-panel">
+          <label class="setting-row"><div><strong>Sonidos</strong><small>Efectos durante la partida</small></div><input id="soundToggle" type="checkbox" checked /></label>
+          <label class="setting-row"><div><strong>Vibración</strong><small>Respuesta háptica en móviles</small></div><input id="vibrationToggle" type="checkbox" checked /></label>
+          <label class="setting-row"><div><strong>Alto contraste</strong><small>Mejora la legibilidad</small></div><input id="contrastToggle" type="checkbox" /></label>
+          <button id="resetProgressBtn" class="danger-btn">Restablecer progreso</button>
+        </div>
+      </section>
+    </main>
+
+    <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <div id="modalIcon" class="modal-icon">🎉</div>
+        <p id="modalEyebrow" class="eyebrow">NIVEL COMPLETADO</p>
+        <h2 id="modalTitle">¡Excelente!</h2>
+        <p id="modalText">Has encontrado todas las palabras.</p>
+        <div id="modalStars" class="modal-stars">★★★</div>
+        <div id="modalRewards" class="reward-row"></div>
+        <button id="modalPrimary" class="primary-btn">Continuar</button>
+        <button id="modalSecondary" class="secondary-btn">Volver al mapa</button>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
