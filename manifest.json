@@ -1,13 +1,14 @@
 {
-  "name": "Word Quest 1.0.1",
-  "short_name": "WordQuest",
-  "description": "Juego de sopa de letras con niveles, monedas, pistas y estadísticas.",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#08111f",
-  "theme_color": "#111827",
-  "orientation": "portrait-primary",
-  "icons": [
-    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  "name":"Word Quest 3D",
+  "short_name":"WQ 3D",
+  "description":"Juego tridimensional de sopa de letras con niveles, efectos y progreso.",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#07101f",
+  "theme_color":"#07101f",
+  "orientation":"any",
+  "icons":[
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
   ]
 }
