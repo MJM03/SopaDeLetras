@@ -1,24 +1,17 @@
-WORD QUEST WORLDS v1.1
+WORD QUEST WORLDS v1.2 ROADMAP
 
-Archivos listos para GitHub Pages, todos en la raíz.
+NOVEDADES
+- Mapa principal de mundos tipo roadmap
+- Ruta animada con progreso visual
+- Roadmap interno de 12 niveles por mundo
+- Cofres en niveles 4 y 8
+- Jefe final en nivel 12
+- Estados completado, disponible y bloqueado
+- Configuración para desbloquear/bloquear toda la campaña
+- UI temática conservada en cada mundo
+- PWA y modo offline
 
-Incluye:
-- 8 mundos temáticos
-- 12 niveles por mundo (96 niveles)
-- dificultad progresiva
-- recompensas, estrellas y monedas
-- tableros animados por categoría
-- selección táctil y mouse
-- cronómetro y pausa que oculta el tablero
-- guardado local
-- PWA instalable y offline
-
-Publicación:
-1. Sube todos los archivos a la raíz del repositorio.
-2. Activa GitHub Pages desde Settings > Pages.
-3. Abre la URL publicada.
-
-
-NUEVO v1.1:
-- Ajuste para bloquear/desbloquear todos los mundos y niveles.
-- UI visual diferenciada por cada temática.
+PUBLICACIÓN
+1. Elimina los archivos antiguos del repositorio.
+2. Sube todos estos archivos a la raíz.
+3. Abre GitHub Pages en una pestaña privada la primera vez.

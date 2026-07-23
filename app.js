@@ -45,18 +45,82 @@ function unlockedLevel(i){
 }
 function renderWorldCards(target,preview=false){
   const host=$(target);host.innerHTML="";
-  WORLDS.forEach((w,i)=>{
-    if(preview&&i>3)return;
-    const complete=worldProgress(i),locked=!state.unlockAll&&i>state.unlockedWorld;
-    const card=document.createElement("button");card.className="world-card"+(locked?" locked":"");
-    card.style.setProperty("--world-bg",w.bg);card.style.setProperty("--world-glow",w.glow);
-    card.innerHTML=`<span class="world-icon">${w.icon}</span>${locked?'<span class="lock">🔒</span>':''}
-      <div class="world-card-content"><span class="eyebrow">MUNDO ${i+1}</span><h3>${w.name}</h3><p>${w.desc}</p>
-      <div class="mini-progress"><i style="width:${complete/LEVELS_PER_WORLD*100}%"></i></div></div>`;
-    card.addEventListener("click",()=>{if(locked){toast("Completa más niveles para desbloquearlo");return}openWorld(i)});
-    host.appendChild(card)
+  if(preview){
+    WORLDS.forEach((w,i)=>{
+      if(i>3)return;
+      const complete=worldProgress(i),locked=!state.unlockAll&&i>state.unlockedWorld;
+      const card=document.createElement("button");card.className="world-card"+(locked?" locked":"");
+      card.style.setProperty("--world-bg",w.bg);card.style.setProperty("--world-glow",w.glow);
+      card.innerHTML=`<span class="world-icon">${w.icon}</span>${locked?'<span class="lock">🔒</span>':''}
+        <div class="world-card-content"><span class="eyebrow">MUNDO ${i+1}</span><h3>${w.name}</h3><p>${w.desc}</p>
+        <div class="mini-progress"><i style="width:${complete/LEVELS_PER_WORLD*100}%"></i></div></div>`;
+      card.addEventListener("click",()=>{if(locked){toast("Completa más niveles para desbloquearlo");return}openWorld(i)});
+      host.appendChild(card)
+    });
+  }else{
+    renderWorldRoadmap(host)
+  }
+  $("#worldProgress").textContent=`${state.unlockAll?WORLDS.length:Math.min(state.unlockedWorld+1,WORLDS.length)} / ${WORLDS.length}`
+}
+
+function routePath(points){
+  if(!points.length)return "";
+  let d=`M ${points[0].x} ${points[0].y}`;
+  for(let i=1;i<points.length;i++){
+    const a=points[i-1],b=points[i],mid=(a.y+b.y)/2;
+    d+=` C ${a.x} ${mid}, ${b.x} ${mid}, ${b.x} ${b.y}`
+  }
+  return d
+}
+function makeRouteSvg(points,progressRatio=1){
+  const d=routePath(points);
+  const visible=Math.max(0,Math.min(1,progressRatio));
+  return `<svg class="route-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    <defs><linearGradient id="routeGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="var(--accent2)"/></linearGradient></defs>
+    <path class="base" d="${d}"/><path class="progress" d="${d}" pathLength="100" style="stroke-dasharray:${visible*100} 100"/>
+  </svg>`
+}
+function renderWorldRoadmap(host){
+  const points=[
+    {x:30,y:9},{x:70,y:20},{x:34,y:32},{x:68,y:44},
+    {x:31,y:57},{x:69,y:69},{x:35,y:81},{x:67,y:92}
+  ];
+  const available=state.unlockAll?WORLDS.length:Math.min(state.unlockedWorld+1,WORLDS.length);
+  host.innerHTML=makeRouteSvg(points,Math.max(0,(available-1)/(WORLDS.length-1)));
+  points.forEach((pt,i)=>{
+    const w=WORLDS[i],done=worldProgress(i),locked=!state.unlockAll&&i>state.unlockedWorld;
+    const complete=done>=LEVELS_PER_WORLD,current=!locked&&!complete&&i===Math.min(state.unlockedWorld,WORLDS.length-1);
+    const node=document.createElement("button");
+    node.className=`roadmap-node ${locked?"locked":complete?"complete":current?"current":""}`;
+    node.style.left=pt.x+"%";node.style.top=pt.y+"%";node.style.setProperty("--node-a",w.accent);node.style.setProperty("--node-b",w.accent2);
+    node.innerHTML=`<span class="node-orb">${w.icon}</span><span class="node-copy"><b>${w.name}</b><small>${done}/${LEVELS_PER_WORLD} niveles</small><span class="node-stars">${Math.min(36,Object.values(state.progress[w.id]||{}).reduce((a,v)=>a+(v.stars||0),0))} ★</span></span>`;
+    node.addEventListener("click",()=>{if(locked){toast("Completa el mundo anterior para avanzar");return}openWorld(i)});
+    host.appendChild(node)
   });
-  $("#worldProgress").textContent=`${Math.min(state.unlockedWorld+1,WORLDS.length)} / ${WORLDS.length}`
+}
+function renderLevelRoadmap(host,w,p,unlock){
+  const points=[
+    {x:28,y:7},{x:69,y:14},{x:35,y:22},{x:71,y:30},
+    {x:30,y:38},{x:67,y:46},{x:35,y:54},{x:72,y:62},
+    {x:29,y:70},{x:66,y:78},{x:36,y:86},{x:68,y:94}
+  ];
+  host.innerHTML=makeRouteSvg(points,unlock/(LEVELS_PER_WORLD-1));
+  const decor=["✦","◆","✧","✦","◆"];
+  decor.forEach((s,i)=>{
+    const d=document.createElement("span");d.className="route-reward";d.textContent=s;d.style.left=(50+(i%2?18:-18))+"%";d.style.top=(17+i*17)+"%";host.appendChild(d)
+  });
+  points.forEach((pt,i)=>{
+    const done=p[i],locked=!state.unlockAll&&i>unlock,current=!locked&&!done&&i===unlock;
+    const chest=i===3||i===7,boss=i===11;
+    const node=document.createElement("button");
+    node.className=`roadmap-node level-node ${locked?"locked":done?"complete":current?"current":""} ${chest?"chest":""} ${boss?"boss":""}`;
+    node.style.left=pt.x+"%";node.style.top=pt.y+"%";node.style.setProperty("--node-a",w.accent);node.style.setProperty("--node-b",w.accent2);
+    const icon=locked?"🔒":boss?"👑":chest?"🎁":i+1;
+    const title=boss?"Jefe final":chest?`Nivel ${i+1} · Cofre`:`Nivel ${i+1}`;
+    node.innerHTML=`<span class="node-orb">${icon}</span><span class="node-copy"><b>${title}</b><small>${done?"★".repeat(done.stars)+"☆".repeat(3-done.stars):locked?"Bloqueado":current?"Jugar ahora":"Disponible"}</small></span>`;
+    node.addEventListener("click",()=>{if(locked){toast("Completa el nivel anterior");return}startLevel(i)});
+    host.appendChild(node)
+  })
 }
 function openWorld(i){
   currentWorld=i;const w=WORLDS[i];applyTheme(w);
@@ -67,14 +131,7 @@ function renderLevels(){
   const w=WORLDS[currentWorld],p=state.progress[w.id]||{},unlock=unlockedLevel(currentWorld);
   $("#worldStars").textContent=`${Object.values(p).reduce((a,v)=>a+(v.stars||0),0)} estrellas`;
   $("#worldCompleted").textContent=`${worldProgress(currentWorld)}/${LEVELS_PER_WORLD} niveles`;
-  const host=$("#levelGrid");host.innerHTML="";
-  for(let i=0;i<LEVELS_PER_WORLD;i++){
-    const done=p[i],locked=i>unlock;
-    const b=document.createElement("button");b.className="level-card"+(locked?" locked":i===unlock?" current":"");
-    b.innerHTML=`<b>${locked?"🔒":i+1}</b><small>${done?"★".repeat(done.stars)+"☆".repeat(3-done.stars):"☆☆☆"}</small>`;
-    b.addEventListener("click",()=>{if(!locked)startLevel(i)});
-    host.appendChild(b)
-  }
+  renderLevelRoadmap($("#levelGrid"),w,p,unlock)
 }
 function applyTheme(w){
   document.documentElement.style.setProperty("--accent",w.accent);document.documentElement.style.setProperty("--accent2",w.accent2);document.body.dataset.world=w.id;document.querySelector("meta[name=theme-color]")?.setAttribute("content",w.bg.match(/#[0-9a-f]{6}/i)?.[0]||"#06111e")

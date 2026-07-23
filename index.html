@@ -22,11 +22,11 @@
         <div class="logo">WQ</div>
         <div>
           <strong>Word Quest</strong>
-          <small>Worlds · v1.1</small>
+          <small>Worlds · v1.2 Roadmap</small>
         </div>
       </div>
-      <div class="currency"><span>✦</span><b id="coinsTop">0</b></div>
       <button id="settingsBtn" class="icon-btn" aria-label="Configuración">⚙</button>
+      <div class="currency"><span>✦</span><b id="coinsTop">0</b></div>
     </header>
 
     <main>
@@ -34,8 +34,8 @@
         <div class="hero">
           <span class="eyebrow">AVENTURA DE PALABRAS</span>
           <h1>Explora mundos.<br>Descubre palabras.</h1>
-          <p>Completa niveles, gana estrellas y desbloquea nuevos universos.</p>
-          <button id="playBtn" class="primary-btn">Continuar aventura</button>
+          <p>Avanza por rutas temáticas, abre cofres y conquista niveles jefe.</p>
+          <button id="playBtn" class="primary-btn">Abrir mapa de aventura</button>
         </div>
 
         <div class="summary-grid">
@@ -46,22 +46,28 @@
 
         <div class="section-heading">
           <div>
-            <span class="eyebrow">DESTINOS</span>
-            <h2>Mundos disponibles</h2>
+            <span class="eyebrow">PRÓXIMOS DESTINOS</span>
+            <h2>Tu aventura</h2>
           </div>
         </div>
         <div id="worldPreview" class="world-preview"></div>
       </section>
 
       <section id="worldsScreen" class="screen">
-        <div class="screen-head">
+        <div class="screen-head roadmap-heading">
           <div>
             <span class="eyebrow">MAPA PRINCIPAL</span>
-            <h2>Elige un mundo</h2>
+            <h2>Ruta de los mundos</h2>
+            <p>Recorre el camino y desbloquea cada universo.</p>
           </div>
           <div class="badge" id="worldProgress">0 / 8</div>
         </div>
-        <div id="worldGrid" class="world-grid"></div>
+        <div class="roadmap-legend">
+          <span><i class="legend-dot complete"></i>Completado</span>
+          <span><i class="legend-dot current"></i>Disponible</span>
+          <span><i class="legend-dot locked"></i>Bloqueado</span>
+        </div>
+        <div id="worldGrid" class="world-roadmap" aria-label="Mapa de mundos"></div>
       </section>
 
       <section id="levelsScreen" class="screen">
@@ -78,7 +84,14 @@
             <span id="worldCompleted">0/12 niveles</span>
           </div>
         </div>
-        <div id="levelGrid" class="level-grid"></div>
+        <div class="route-title">
+          <div>
+            <span class="eyebrow">CAMINO DEL MUNDO</span>
+            <h3>Ruta de niveles</h3>
+          </div>
+          <span>🎁 Cofres · 👑 Jefe final</span>
+        </div>
+        <div id="levelGrid" class="level-roadmap" aria-label="Mapa de niveles"></div>
       </section>
 
       <section id="gameScreen" class="screen game-screen">
@@ -122,7 +135,7 @@
         </section>
 
         <nav class="game-actions">
-          <button id="levelsBtn"><span>⌂</span><small>Niveles</small></button>
+          <button id="levelsBtn"><span>⌂</span><small>Ruta</small></button>
           <button id="shuffleBtn"><span>↻</span><small>Reiniciar</small></button>
           <button id="pauseBtn" class="main-action"><span>Ⅱ</span><small>Pausa</small></button>
           <button id="soundBtn"><span>♪</span><small>Sonido</small></button>
@@ -135,7 +148,6 @@
 
   <div id="rewardModal" class="modal">
     <div class="modal-card reward-card">
-      <div class="reward-burst"></div>
       <span class="eyebrow">NIVEL COMPLETADO</span>
       <h2>¡Excelente trabajo!</h2>
       <div id="rewardStars" class="reward-stars">☆☆☆</div>
@@ -145,29 +157,47 @@
         <div><span>Premio</span><b id="rewardCoins">+0 ✦</b></div>
       </div>
       <button id="nextLevelBtn" class="primary-btn">Siguiente nivel</button>
-      <button id="modalLevelsBtn" class="secondary-btn">Volver al mapa</button>
+      <button id="modalLevelsBtn" class="secondary-btn">Volver a la ruta</button>
     </div>
   </div>
 
   <div id="settingsModal" class="modal">
     <div class="modal-card settings-card">
       <div class="settings-head">
-        <div><span class="eyebrow">CONFIGURACIÓN</span><h2>Ajustes del juego</h2></div>
+        <div>
+          <span class="eyebrow">CONFIGURACIÓN</span>
+          <h2>Opciones del juego</h2>
+        </div>
         <button id="closeSettings" class="icon-btn" aria-label="Cerrar">×</button>
       </div>
+
       <div class="setting-row">
-        <div><b>Desbloquear todo</b><small>Permite entrar a todos los mundos y niveles.</small></div>
-        <label class="switch"><input id="unlockAllToggle" type="checkbox"><span></span></label>
+        <div>
+          <b>Desbloquear toda la campaña</b>
+          <small>Habilita todos los mundos y niveles sin borrar tu progreso.</small>
+        </div>
+        <label class="switch">
+          <input id="unlockAllToggle" type="checkbox">
+          <span></span>
+        </label>
       </div>
+
       <div class="setting-row">
-        <div><b>Sonido</b><small>Activa o desactiva efectos de sonido.</small></div>
-        <label class="switch"><input id="soundToggle" type="checkbox"><span></span></label>
+        <div>
+          <b>Sonido</b>
+          <small>Activa los efectos al encontrar palabras.</small>
+        </div>
+        <label class="switch">
+          <input id="soundToggle" type="checkbox">
+          <span></span>
+        </label>
       </div>
+
       <div class="settings-actions">
-        <button id="lockAllBtn" class="secondary-btn">Bloquear progreso</button>
         <button id="unlockAllBtn" class="primary-btn">Desbloquear todo</button>
+        <button id="lockAllBtn" class="secondary-btn">Progresión normal</button>
       </div>
-      <p class="settings-note">El desbloqueo manual no elimina tus estrellas ni mejores tiempos.</p>
+      <p class="settings-note">La progresión, estrellas, monedas y mejores tiempos se conservan al cambiar esta opción.</p>
     </div>
   </div>
 
