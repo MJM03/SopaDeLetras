@@ -23,7 +23,8 @@ const WORLDS = [
 const LEVELS_PER_WORLD=12;
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
-const state=JSON.parse(localStorage.getItem("wq-worlds-save")||'{"coins":120,"stars":0,"words":0,"unlockedWorld":0,"progress":{},"sound":true}');
+const state=JSON.parse(localStorage.getItem("wq-worlds-save")||'{"coins":120,"stars":0,"words":0,"unlockedWorld":0,"progress":{},"sound":true,"unlockAll":false}');
+if(typeof state.unlockAll!=="boolean")state.unlockAll=false;
 let currentWorld=0,currentLevel=0,grid=[],placed=[],found=new Set(),selecting=false,startCell=null,currentPath=[],timerId=null,elapsed=0,score=0,hints=3,paused=false,currentSize=8;
 let audioCtx=null;
 
@@ -40,13 +41,13 @@ function worldProgress(i){
   const p=state.progress[WORLDS[i].id]||{}; return Object.values(p).filter(v=>v&&v.stars).length
 }
 function unlockedLevel(i){
-  const p=state.progress[WORLDS[i].id]||{};let n=0;while(p[n]&&p[n].stars)n++;return Math.min(n,LEVELS_PER_WORLD-1)
+  if(state.unlockAll)return LEVELS_PER_WORLD-1;const p=state.progress[WORLDS[i].id]||{};let n=0;while(p[n]&&p[n].stars)n++;return Math.min(n,LEVELS_PER_WORLD-1)
 }
 function renderWorldCards(target,preview=false){
   const host=$(target);host.innerHTML="";
   WORLDS.forEach((w,i)=>{
     if(preview&&i>3)return;
-    const complete=worldProgress(i),locked=i>state.unlockedWorld;
+    const complete=worldProgress(i),locked=!state.unlockAll&&i>state.unlockedWorld;
     const card=document.createElement("button");card.className="world-card"+(locked?" locked":"");
     card.style.setProperty("--world-bg",w.bg);card.style.setProperty("--world-glow",w.glow);
     card.innerHTML=`<span class="world-icon">${w.icon}</span>${locked?'<span class="lock">🔒</span>':''}
@@ -60,7 +61,7 @@ function renderWorldCards(target,preview=false){
 function openWorld(i){
   currentWorld=i;const w=WORLDS[i];applyTheme(w);
   $("#worldNumber").textContent=`MUNDO ${i+1}`;$("#worldTitle").textContent=w.name;$("#worldDescription").textContent=w.desc;
-  renderLevels();showScreen("levelsScreen");startBannerAnimation(w)
+  renderLevels();showScreen("levelsScreen");startBannerAnimation(w);let stamp=$("#worldBanner .theme-stamp");if(!stamp){stamp=document.createElement("span");stamp.className="theme-stamp";$("#worldBanner").appendChild(stamp)}stamp.textContent=w.icon
 }
 function renderLevels(){
   const w=WORLDS[currentWorld],p=state.progress[w.id]||{},unlock=unlockedLevel(currentWorld);
@@ -76,7 +77,7 @@ function renderLevels(){
   }
 }
 function applyTheme(w){
-  document.documentElement.style.setProperty("--accent",w.accent);document.documentElement.style.setProperty("--accent2",w.accent2)
+  document.documentElement.style.setProperty("--accent",w.accent);document.documentElement.style.setProperty("--accent2",w.accent2);document.body.dataset.world=w.id;document.querySelector("meta[name=theme-color]")?.setAttribute("content",w.bg.match(/#[0-9a-f]{6}/i)?.[0]||"#06111e")
 }
 function startLevel(level){
   currentLevel=level;const w=WORLDS[currentWorld];applyTheme(w);
@@ -213,5 +214,17 @@ $("#soundBtn").onclick=()=>{state.sound=!state.sound;save();toast(state.sound?"S
 $("#nextLevelBtn").onclick=nextLevel;$("#modalLevelsBtn").onclick=()=>{$("#rewardModal").classList.remove("active");openWorld(currentWorld)};
 addEventListener("pointermove",onPointerMove,{passive:false});addEventListener("pointerup",onPointerUp);addEventListener("pointercancel",onPointerUp);
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&$("#gameScreen").classList.contains("active"))togglePause(true)});
+function syncSettings(){
+  $("#unlockAllToggle").checked=!!state.unlockAll;$("#soundToggle").checked=!!state.sound;
+}
+function refreshMaps(){renderWorldCards("#worldGrid");renderWorldCards("#worldPreview",true);if($("#levelsScreen").classList.contains("active"))renderLevels()}
+function setUnlockAll(value){state.unlockAll=!!value;save();syncSettings();refreshMaps();toast(value?"Todos los mundos y niveles desbloqueados":"Progresión normal restaurada")}
+$("#settingsBtn").onclick=()=>{syncSettings();$("#settingsModal").classList.add("active")};
+$("#closeSettings").onclick=()=>$("#settingsModal").classList.remove("active");
+$("#settingsModal").addEventListener("click",e=>{if(e.target.id==="settingsModal")e.currentTarget.classList.remove("active")});
+$("#unlockAllToggle").onchange=e=>setUnlockAll(e.target.checked);
+$("#soundToggle").onchange=e=>{state.sound=e.target.checked;save();toast(state.sound?"Sonido activado":"Sonido desactivado")};
+$("#unlockAllBtn").onclick=()=>setUnlockAll(true);
+$("#lockAllBtn").onclick=()=>setUnlockAll(false);
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 updateTop();renderWorldCards("#worldPreview",true);ambient();

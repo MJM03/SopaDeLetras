@@ -22,10 +22,11 @@
         <div class="logo">WQ</div>
         <div>
           <strong>Word Quest</strong>
-          <small>Worlds · v1.0</small>
+          <small>Worlds · v1.1</small>
         </div>
       </div>
       <div class="currency"><span>✦</span><b id="coinsTop">0</b></div>
+      <button id="settingsBtn" class="icon-btn" aria-label="Configuración">⚙</button>
     </header>
 
     <main>
@@ -145,6 +146,28 @@
       </div>
       <button id="nextLevelBtn" class="primary-btn">Siguiente nivel</button>
       <button id="modalLevelsBtn" class="secondary-btn">Volver al mapa</button>
+    </div>
+  </div>
+
+  <div id="settingsModal" class="modal">
+    <div class="modal-card settings-card">
+      <div class="settings-head">
+        <div><span class="eyebrow">CONFIGURACIÓN</span><h2>Ajustes del juego</h2></div>
+        <button id="closeSettings" class="icon-btn" aria-label="Cerrar">×</button>
+      </div>
+      <div class="setting-row">
+        <div><b>Desbloquear todo</b><small>Permite entrar a todos los mundos y niveles.</small></div>
+        <label class="switch"><input id="unlockAllToggle" type="checkbox"><span></span></label>
+      </div>
+      <div class="setting-row">
+        <div><b>Sonido</b><small>Activa o desactiva efectos de sonido.</small></div>
+        <label class="switch"><input id="soundToggle" type="checkbox"><span></span></label>
+      </div>
+      <div class="settings-actions">
+        <button id="lockAllBtn" class="secondary-btn">Bloquear progreso</button>
+        <button id="unlockAllBtn" class="primary-btn">Desbloquear todo</button>
+      </div>
+      <p class="settings-note">El desbloqueo manual no elimina tus estrellas ni mejores tiempos.</p>
     </div>
   </div>
 
