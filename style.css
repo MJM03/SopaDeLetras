@@ -26,3 +26,17 @@ button,select,input{font:inherit}button{color:inherit;cursor:pointer}#app,#gl,#l
 @media(max-width:390px){.wallet span{padding:8px}.brand b{font-size:14px}.word-list{grid-template-columns:repeat(2,1fr)}.hud-bottom{font-size:11px}.controls button small{font-size:9px}}
 
 .render-version{position:fixed;z-index:20;right:12px;top:calc(78px + var(--safe-top));font-size:9px;color:#46e8ff;background:rgba(3,8,20,.72);border:1px solid rgba(70,232,255,.22);padding:5px 8px;border-radius:999px;pointer-events:none}
+
+
+/* v3.2: modo de rendimiento automático para iPhone/Android */
+body.performance .glass,body.performance .glass-heavy{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(7,20,39,.94);box-shadow:0 10px 30px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.04)}
+body.performance .ambient{display:none}
+body.performance .scene-grid{opacity:.12;background-size:76px 76px}
+body.performance .world-dot,body.performance .orb i{animation:none}
+body.performance .letter{filter:none;text-shadow:0 0 6px rgba(70,232,255,.58),0 2px 2px #00101d;transition:none;contain:layout style paint}
+body.performance .progress i{box-shadow:none}
+body.performance .particle{box-shadow:none}
+body.performance .controls button:hover{background:transparent}
+body.ultra-low .scene-grid,body.ultra-low .scene-vignette{display:none}
+body.ultra-low .letter{text-shadow:0 1px 2px #00101d}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}

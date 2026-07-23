@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#07101f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Word Quest 3D Native v3.1.2</title>
+<title>Word Quest 3D Native v3.2</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="style.css">
@@ -16,10 +16,10 @@
   <canvas id="gl"></canvas>
   <div id="labels"></div>
   <div class="scene-grid"></div><div class="scene-vignette"></div><div id="particles" class="particles"></div>
-  <div class="ambient a"></div><div class="ambient b"></div><div class="render-version">RENDER v3.1.2</div>
+  <div class="ambient a"></div><div class="ambient b"></div><div class="render-version">RENDER v3.2</div>
 
   <header class="top glass">
-    <div class="brand"><div class="mark">WQ</div><div><b>Word Quest 3D</b><small>v3.1.2 · WebGL Native</small></div></div>
+    <div class="brand"><div class="mark">WQ</div><div><b>Word Quest 3D</b><small>v3.2 · WebGL Native</small></div></div>
     <div class="wallet"><span>⭐ <b id="stars">0</b></span><span>🪙 <b id="coins">100</b></span><button id="settings" aria-label="Ajustes">⚙️</button></div>
   </header>
 
@@ -50,7 +50,7 @@
   <section id="start" class="screen show">
     <div class="panel glass-heavy">
       <div class="orb"><div>WQ</div><i></i><i></i></div>
-      <span class="version">WEBGL NATIVO · V3.1.1 CORREGIDA</span>
+      <span class="version">WEBGL NATIVO · V3.2 PERFORMANCE</span>
       <h2>Sopa de letras<br><em>en 3D real.</em></h2>
       <p>Explora mundos de palabras con cubos iluminados, cámara cinematográfica y efectos reactivos en tiempo real.</p>
       <button id="play" class="cta">COMENZAR <span>▶</span></button>
@@ -60,7 +60,7 @@
 
   <section id="pauseScreen" class="screen"><div class="modal glass-heavy"><div class="modal-icon">Ⅱ</div><h2>Partida en pausa</h2><p>El cronómetro está detenido.</p><button id="resume" class="cta">CONTINUAR</button><button id="restart" class="secondary">Reiniciar nivel</button></div></section>
   <section id="win" class="screen"><div class="modal glass-heavy"><div id="winStars" class="win-stars">★ ★ ★</div><small>NIVEL COMPLETADO</small><h2 id="winTitle">¡Excelente!</h2><p id="winText"></p><div class="rewards"><div>🎯<b id="finalScore">0</b><small>Puntos</small></div><div>⏱<b id="finalTime">00:00</b><small>Tiempo</small></div><div>🪙<b id="reward">+30</b><small>Premio</small></div></div><button id="next" class="cta">SIGUIENTE NIVEL →</button><button id="replay" class="secondary">Volver a jugar</button></div></section>
-  <section id="settingsScreen" class="screen"><div class="modal glass-heavy settings"><button id="closeSettings" class="close">✕</button><h2>Ajustes</h2><label><span><b>Sonido</b><small>Efectos del juego</small></span><input id="sound" type="checkbox" checked></label><label><span><b>Vibración</b><small>Respuesta háptica</small></span><input id="vibration" type="checkbox" checked></label><label><span><b>Calidad</b><small>Resolución del render</small></span><select id="quality"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Baja</option></select></label><button id="reset" class="danger">Restablecer progreso</button></div></section>
+  <section id="settingsScreen" class="screen"><div class="modal glass-heavy settings"><button id="closeSettings" class="close">✕</button><h2>Ajustes</h2><label><span><b>Sonido</b><small>Efectos del juego</small></span><input id="sound" type="checkbox" checked></label><label><span><b>Vibración</b><small>Respuesta háptica</small></span><input id="vibration" type="checkbox" checked></label><label><span><b>Calidad</b><small>Resolución del render</small></span><select id="quality"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Rendimiento</option></select></label><button id="reset" class="danger">Restablecer progreso</button></div></section>
 
   <section id="loading" class="loading"><div class="cube-loader"><i></i><i></i><i></i></div><b>Iniciando WebGL 3D...</b><small id="loadingText">Preparando geometría e iluminación</small></section>
   <section id="error" class="screen"><div class="modal glass-heavy"><div class="modal-icon">!</div><h2>No se pudo iniciar WebGL</h2><p id="errorText">Este navegador no habilitó la aceleración 3D.</p><button id="retry" class="cta">REINTENTAR</button></div></section>
