@@ -1,32 +1,19 @@
-WORD QUEST v1.0
+WORD QUEST WORLDS v1.0
 
-Contenido:
-- index.html
-- styles.css
-- game.js
-- manifest.json
-- service-worker.js
-- icon.svg
+Archivos listos para GitHub Pages, todos en la raíz.
 
-Funciones incluidas:
-- 12 niveles con dificultad progresiva.
-- Generador automático de sopas de letras.
-- Selección táctil y con mouse en horizontal, vertical y diagonal.
-- Palabras invertidas desde niveles intermedios.
-- Animaciones, partículas, sonidos y vibración.
-- Sistema de estrellas, puntos, monedas y pistas.
-- Reto diario.
-- Estadísticas, logros y rachas.
-- Guardado local automático.
-- PWA instalable y funcionamiento sin conexión.
-- Diseño responsive para iPhone, Android y escritorio.
+Incluye:
+- 8 mundos temáticos
+- 12 niveles por mundo (96 niveles)
+- dificultad progresiva
+- recompensas, estrellas y monedas
+- tableros animados por categoría
+- selección táctil y mouse
+- cronómetro y pausa que oculta el tablero
+- guardado local
+- PWA instalable y offline
 
-PUBLICAR EN GITHUB PAGES
+Publicación:
 1. Sube todos los archivos a la raíz del repositorio.
-2. En GitHub abre Settings > Pages.
-3. Selecciona Deploy from a branch.
-4. Elige main y /(root).
-5. Guarda y espera a que GitHub genere la URL.
-
-NOTA
-Al actualizar archivos, cambia el nombre CACHE dentro de service-worker.js para forzar la actualización en dispositivos instalados.
+2. Activa GitHub Pages desde Settings > Pages.
+3. Abre la URL publicada.

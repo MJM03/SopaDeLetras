@@ -1,70 +1,153 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#07101f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Word Quest 3D Native v3.2</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#07111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Word Quest">
+  <title>Word Quest Worlds</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div id="app">
-  <canvas id="gl"></canvas>
-  <div id="labels"></div>
-  <div class="scene-grid"></div><div class="scene-vignette"></div><div id="particles" class="particles"></div>
-  <div class="ambient a"></div><div class="ambient b"></div><div class="render-version">RENDER v3.2</div>
+  <canvas id="ambient" aria-hidden="true"></canvas>
 
-  <header class="top glass">
-    <div class="brand"><div class="mark">WQ</div><div><b>Word Quest 3D</b><small>v3.2 · WebGL Native</small></div></div>
-    <div class="wallet"><span>⭐ <b id="stars">0</b></span><span>🪙 <b id="coins">100</b></span><button id="settings" aria-label="Ajustes">⚙️</button></div>
-  </header>
+  <div id="app">
+    <header class="topbar">
+      <button id="homeBtn" class="icon-btn" aria-label="Volver al inicio">⌂</button>
+      <div class="brand">
+        <div class="logo">WQ</div>
+        <div>
+          <strong>Word Quest</strong>
+          <small>Worlds · v1.0</small>
+        </div>
+      </div>
+      <div class="currency"><span>✦</span><b id="coinsTop">0</b></div>
+    </header>
 
-  <div id="worldChip" class="world-chip glass"><span class="world-dot"></span><b>ESCENARIO ACTIVO</b></div>
-  <section class="hud glass">
-    <small id="world">MUNDO 1 · NEXO</small>
-    <div class="title-row"><div><h1 id="title">Nivel 1</h1><p id="subtitle">Encuentra todas las palabras</p></div><div id="levelBadge" class="badge">1</div></div>
-    <div class="progress"><i id="bar"></i></div><div class="hud-bottom"><span id="progressText">0 / 6</span><span>⏱ <b id="time">00:00</b></span><span>🎯 <b id="score">0</b></span></div>
-  </section>
+    <main>
+      <section id="homeScreen" class="screen active">
+        <div class="hero">
+          <span class="eyebrow">AVENTURA DE PALABRAS</span>
+          <h1>Explora mundos.<br>Descubre palabras.</h1>
+          <p>Completa niveles, gana estrellas y desbloquea nuevos universos.</p>
+          <button id="playBtn" class="primary-btn">Continuar aventura</button>
+        </div>
 
-  <aside class="words glass">
-    <div class="words-head"><div><small>OBJETIVOS</small><h2>Palabras</h2></div><button id="hint">💡 <b id="hints">3</b></button></div>
-    <div id="wordList" class="word-list"></div>
-    <p>Desliza el dedo en línea recta sobre los cubos.</p>
-  </aside>
+        <div class="summary-grid">
+          <article><span>Nivel</span><b id="playerLevel">1</b></article>
+          <article><span>Estrellas</span><b id="starsTotal">0</b></article>
+          <article><span>Palabras</span><b id="wordsTotal">0</b></article>
+        </div>
 
-  <nav class="controls glass">
-    <button id="home">⌂<small>Inicio</small></button>
-    <button id="left">↶<small>Girar</small></button>
-    <button id="center" class="main">◎<small>Centrar</small></button>
-    <button id="right">↷<small>Girar</small></button>
-    <button id="pause">Ⅱ<small>Pausa</small></button>
-  </nav>
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">DESTINOS</span>
+            <h2>Mundos disponibles</h2>
+          </div>
+        </div>
+        <div id="worldPreview" class="world-preview"></div>
+      </section>
 
-  <div id="toast" class="toast"></div>
-  <div id="combo" class="combo">¡PALABRA!</div>
+      <section id="worldsScreen" class="screen">
+        <div class="screen-head">
+          <div>
+            <span class="eyebrow">MAPA PRINCIPAL</span>
+            <h2>Elige un mundo</h2>
+          </div>
+          <div class="badge" id="worldProgress">0 / 8</div>
+        </div>
+        <div id="worldGrid" class="world-grid"></div>
+      </section>
 
-  <section id="start" class="screen show">
-    <div class="panel glass-heavy">
-      <div class="orb"><div>WQ</div><i></i><i></i></div>
-      <span class="version">WEBGL NATIVO · V3.2 PERFORMANCE</span>
-      <h2>Sopa de letras<br><em>en 3D real.</em></h2>
-      <p>Explora mundos de palabras con cubos iluminados, cámara cinematográfica y efectos reactivos en tiempo real.</p>
-      <button id="play" class="cta">COMENZAR <span>▶</span></button>
-      <div class="features"><div><b>12</b><small>Niveles</small></div><div><b>5</b><small>Mundos</small></div><div><b>3D</b><small>Real</small></div></div>
+      <section id="levelsScreen" class="screen">
+        <div class="world-banner" id="worldBanner">
+          <canvas id="bannerCanvas"></canvas>
+          <button id="backWorlds" class="back-btn">← Mundos</button>
+          <div class="world-banner-copy">
+            <span class="eyebrow" id="worldNumber"></span>
+            <h2 id="worldTitle"></h2>
+            <p id="worldDescription"></p>
+          </div>
+          <div class="world-stats">
+            <span id="worldStars">0 estrellas</span>
+            <span id="worldCompleted">0/12 niveles</span>
+          </div>
+        </div>
+        <div id="levelGrid" class="level-grid"></div>
+      </section>
+
+      <section id="gameScreen" class="screen game-screen">
+        <div class="game-hud">
+          <div>
+            <span class="eyebrow" id="gameWorld"></span>
+            <h2 id="gameLevel">Nivel 1</h2>
+          </div>
+          <div class="hud-metrics">
+            <div><small>Tiempo</small><b id="timer">00:00</b></div>
+            <div><small>Puntos</small><b id="score">0</b></div>
+          </div>
+        </div>
+
+        <div class="progress-row">
+          <span id="foundCount">0 / 0 palabras</span>
+          <div class="progress-track"><div id="progressFill"></div></div>
+          <span id="difficultyLabel">Fácil</span>
+        </div>
+
+        <div id="boardShell" class="board-shell">
+          <canvas id="themeCanvas"></canvas>
+          <div id="board" class="board" aria-label="Tablero de sopa de letras"></div>
+          <div id="pauseShield" class="pause-shield">
+            <div class="pause-icon">Ⅱ</div>
+            <h3>Partida en pausa</h3>
+            <p>Las letras están ocultas.</p>
+            <button id="resumeBtn" class="primary-btn">Continuar</button>
+          </div>
+        </div>
+
+        <section class="objectives-panel">
+          <div class="objective-head">
+            <div>
+              <span class="eyebrow">OBJETIVOS</span>
+              <h3>Palabras por encontrar</h3>
+            </div>
+            <button id="hintBtn" class="hint-btn">💡 <span id="hintsCount">3</span></button>
+          </div>
+          <div id="wordList" class="word-list"></div>
+        </section>
+
+        <nav class="game-actions">
+          <button id="levelsBtn"><span>⌂</span><small>Niveles</small></button>
+          <button id="shuffleBtn"><span>↻</span><small>Reiniciar</small></button>
+          <button id="pauseBtn" class="main-action"><span>Ⅱ</span><small>Pausa</small></button>
+          <button id="soundBtn"><span>♪</span><small>Sonido</small></button>
+        </nav>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <div id="rewardModal" class="modal">
+    <div class="modal-card reward-card">
+      <div class="reward-burst"></div>
+      <span class="eyebrow">NIVEL COMPLETADO</span>
+      <h2>¡Excelente trabajo!</h2>
+      <div id="rewardStars" class="reward-stars">☆☆☆</div>
+      <div class="reward-metrics">
+        <div><span>Tiempo</span><b id="rewardTime">00:00</b></div>
+        <div><span>Puntos</span><b id="rewardScore">0</b></div>
+        <div><span>Premio</span><b id="rewardCoins">+0 ✦</b></div>
+      </div>
+      <button id="nextLevelBtn" class="primary-btn">Siguiente nivel</button>
+      <button id="modalLevelsBtn" class="secondary-btn">Volver al mapa</button>
     </div>
-  </section>
+  </div>
 
-  <section id="pauseScreen" class="screen"><div class="modal glass-heavy"><div class="modal-icon">Ⅱ</div><h2>Partida en pausa</h2><p>El cronómetro está detenido.</p><button id="resume" class="cta">CONTINUAR</button><button id="restart" class="secondary">Reiniciar nivel</button></div></section>
-  <section id="win" class="screen"><div class="modal glass-heavy"><div id="winStars" class="win-stars">★ ★ ★</div><small>NIVEL COMPLETADO</small><h2 id="winTitle">¡Excelente!</h2><p id="winText"></p><div class="rewards"><div>🎯<b id="finalScore">0</b><small>Puntos</small></div><div>⏱<b id="finalTime">00:00</b><small>Tiempo</small></div><div>🪙<b id="reward">+30</b><small>Premio</small></div></div><button id="next" class="cta">SIGUIENTE NIVEL →</button><button id="replay" class="secondary">Volver a jugar</button></div></section>
-  <section id="settingsScreen" class="screen"><div class="modal glass-heavy settings"><button id="closeSettings" class="close">✕</button><h2>Ajustes</h2><label><span><b>Sonido</b><small>Efectos del juego</small></span><input id="sound" type="checkbox" checked></label><label><span><b>Vibración</b><small>Respuesta háptica</small></span><input id="vibration" type="checkbox" checked></label><label><span><b>Calidad</b><small>Resolución del render</small></span><select id="quality"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Rendimiento</option></select></label><button id="reset" class="danger">Restablecer progreso</button></div></section>
-
-  <section id="loading" class="loading"><div class="cube-loader"><i></i><i></i><i></i></div><b>Iniciando WebGL 3D...</b><small id="loadingText">Preparando geometría e iluminación</small></section>
-  <section id="error" class="screen"><div class="modal glass-heavy"><div class="modal-icon">!</div><h2>No se pudo iniciar WebGL</h2><p id="errorText">Este navegador no habilitó la aceleración 3D.</p><button id="retry" class="cta">REINTENTAR</button></div></section>
-</div>
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
